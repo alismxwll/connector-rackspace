@@ -205,6 +205,63 @@ Factor::Connector.service 'rackspace_compute' do
     action_callback server_info
   end
 
+  action 'ssh' do |params|
+    username  = params['username']
+    api_key   = params['api_key']
+    server_id = params['id']
+    region    = (params['region'] || 'ord').to_sym
+    commands  = params['commands']
+
+    fail "Username is required" unless username
+    fail "API Key is required" unless api_key
+    fail "Server ID is required" unless server_id
+    fail "Commands is required" unless commands
+    fail "Commands must be an array of strings" unless commands.is_a?(Array)
+    fail "Commands must be an array of strings" unless commands.all?{|c| c.is_a?(String)}
+
+    compute_settings = {
+      provider:'Rackspace',
+      rackspace_username:username,
+      rackspace_api_key:api_key,
+      version: :v2,
+      rackspace_region: region
+    }
+
+    info "Initializing connection settings"
+    begin
+      compute = Fog::Compute.new compute_settings
+    rescue
+      fail "Couldn't initialize connection"
+    end
+
+    info "Retreiving server #{server_id}"
+    begin
+      server = compute.servers.get(server_id)
+      server_info = server.attributes
+    rescue
+      fail "Failed to retrieve server #{server_id}"
+    end
+
+    info "Executing commands on server #{server_id}"
+    begin
+      ssh_results = server.ssh(commands)
+
+      call_response = ssh_results.map do |ssh_result|
+        {
+          status:  ssh_result.status,
+          command: ssh_result.command,
+          stderr:  ssh_result.stderr,
+          stdout:  ssh_result.stdout
+        }
+      end
+
+    rescue
+      fail "Failed to execute commands on server #{server_id}"
+    end
+
+    action_callback call_response
+  end
+
   action 'delete' do |params|
     username  = params['username']
     api_key   = params['api_key']
