@@ -78,6 +78,7 @@ Factor::Connector.service 'rackspace_compute' do
     image_id  = params['image_id']
     region    = (params['region'] || 'ord').to_sym
     name      = params['name']
+    wait      = params['wait']
 
     fail "Username is required" unless username
     fail "API Key is required" unless api_key
@@ -113,14 +114,18 @@ Factor::Connector.service 'rackspace_compute' do
       fail "Failed to create server with provided settings"
     end
 
-    info "Waiting for the server. This can take a few minutes."
-    begin
-      server.wait_for { ready? }
-    rescue
-      fail "Server creation started, but couldn't get the status"
+    if wait
+      info "Waiting for the server. This can take a few minutes."
+      begin
+        server.wait_for { ready? }
+        server.reload
+      rescue
+        warn "Server creation started, but couldn't get the status"
+      end
+    else
+      info "Server creation has been queued"
     end
 
-    server.reload
     server_info = server.attributes
 
     action_callback server_info
