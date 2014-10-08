@@ -15,7 +15,7 @@ describe 'Compute' do
     }
 
     service_instance.test_action('list',params) do
-      expect_info message:"Retreiving list of servers"
+      expect_info message:"Retrieving list of servers"
       expect_return
     end
   end

@@ -26,7 +26,7 @@ Factor::Connector.service 'rackspace_compute_flavors' do
       fail "Couldn't initialize connection"
     end
 
-    info "Retreiving list of flavors"
+    info "Retrieving list of flavors"
     begin
       flavors = compute.flavors.map {|s| s.attributes}
     rescue
@@ -61,7 +61,7 @@ Factor::Connector.service 'rackspace_compute_flavors' do
       fail "Couldn't initialize connection"
     end
 
-    info "Retreiving flavor"
+    info "Retrieving flavor"
     begin
       flavor = compute.flavors.get(server_id).attributes
     rescue

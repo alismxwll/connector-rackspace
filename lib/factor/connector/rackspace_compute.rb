@@ -26,7 +26,7 @@ Factor::Connector.service 'rackspace_compute' do
       fail "Couldn't initialize connection"
     end
 
-    info "Retreiving list of servers"
+    info "Retrieving list of servers"
     begin
       servers = compute.servers.map {|s| s.attributes}
     rescue
@@ -61,7 +61,7 @@ Factor::Connector.service 'rackspace_compute' do
       fail "Couldn't initialize connection"
     end
 
-    info "Retreiving servers"
+    info "Retrieving servers"
     begin
       server = compute.servers.get(server_id).attributes
     rescue

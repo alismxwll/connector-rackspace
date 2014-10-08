@@ -26,7 +26,7 @@ Factor::Connector.service 'rackspace_compute_images' do
       fail "Couldn't initialize connection"
     end
 
-    info "Retreiving list of images"
+    info "Retrieving list of images"
     begin
       images = compute.images.map {|s| s.attributes}
     rescue
@@ -61,7 +61,7 @@ Factor::Connector.service 'rackspace_compute_images' do
       fail "Couldn't initialize connection"
     end
 
-    info "Retreiving image"
+    info "Retrieving image"
     begin
       image = compute.images.get(server_id).attributes
     rescue
