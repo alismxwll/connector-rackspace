@@ -242,7 +242,6 @@ Factor::Connector.service 'rackspace_compute' do
     info "Retreiving server #{server_id}"
     begin
       server = compute.servers.get(server_id)
-      server_info = server.attributes
     rescue
       fail "Failed to retrieve server #{server_id}"
     end
