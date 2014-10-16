@@ -250,7 +250,11 @@ Factor::Connector.service 'rackspace_compute' do
     info "Executing commands on server #{server_id}"
     begin
       ssh_results = server.ssh(commands)
+    rescue
+      fail "Failed to execute commands on server #{server_id}"
+    end
 
+    begin
       call_response = ssh_results.map do |ssh_result|
         {
           status:  ssh_result.status,
@@ -259,10 +263,10 @@ Factor::Connector.service 'rackspace_compute' do
           stdout:  ssh_result.stdout
         }
       end
-
     rescue
-      fail "Failed to execute commands on server #{server_id}"
+      fail "Failed to format output"
     end
+
 
     action_callback call_response
   end
